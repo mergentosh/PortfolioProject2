@@ -124,7 +124,7 @@ WITH duplicates as
 (
 SELECT*,
 ROW_NUMBER() OVER( 
-PARTITION BY n.parcelýd,n.propertyaddress,n.saleprice,n.saledate,n.legalreference order by n.uniqueýd ) row_num
+PARTITION BY n.parcelÃ½d,n.propertyaddress,n.saleprice,n.saledate,n.legalreference order by n.uniqueÃ½d ) row_num
 FROM PortfolioProject..Nashville n
 
 )
@@ -153,7 +153,7 @@ DROP COLUMN Saledate
 
 
 
-SELECT uniqueID,parcelýd,landuse,ROW_NUMBER() OVER (PARTITION BY parcelýd,landuse order by uniqueID  ) as ROW_NUMBER
+SELECT uniqueID,parcelÃ½d,landuse,ROW_NUMBER() OVER (PARTITION BY parcelÃ½d,landuse order by uniqueID  ) as ROW_NUMBER
 FROM PortfolioProject..Nashville
 
 
@@ -161,7 +161,7 @@ SELECT *
 FROM PortfolioProject..Nashville
 
 ALTER TABLE PortfolioProject..Nashville
-ALTER COLUMN parcelýd  PARCELID
+ALTER COLUMN parcelÃ½d  PARCELID
 
 EXEC sp_rename 'PortfolioProject.Nashville.ParcelID', 'PARCELID', 'COLUMN';
 

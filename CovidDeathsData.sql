@@ -30,7 +30,7 @@ and location = 'United States'
 
 
 
--- LETS BREAK THINGS DOWN BY CONTINENT 
+--BREAK THINGS DOWN BY CONTINENT 
 
 SELECT continent,MAX(cast(total_deaths as int)) as TotalDeathCountByContinent  
 FROM PortfolioProject..covid_deaths

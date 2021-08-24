@@ -3,7 +3,7 @@ FROM PortfolioProject..covid_deaths
 ORDER BY 1,2
 
 
---Looking at Total Cases vs Total Deaths 
+--Looking at Total Cases vs Total Deaths in 'TURKEY'
 
 SELECT location,date,total_cases,total_deaths ,ROUND( CAST(total_deaths AS int) / total_cases *100,2 ) AS DeathPercentage
 FROM PortfolioProject..[covid_deaths ]
@@ -18,7 +18,7 @@ WHERE location like '%key'
 GROUP BY a.location 
 ORDER BY MaxDeathPercentage DESC
 
---Looking at Total Cases vs Population 
+--Looking at Total Cases vs Population of 'TURKEY'
 
 SELECT location,date,total_cases,population , ROUND(( total_cases / population )*100,2) as TotalCasesPercentageByPopulation
 FROM PortfolioProject..[covid_deaths ]
@@ -36,7 +36,7 @@ AND location in
 GROUP BY location,population 
 ORDER BY HighestInfectionCount desc
 
---Looking at Countries with Highest Infection Rate compared to Population 
+--Countries with Highest Infection Rate compared to Population 
 
 SELECT location , MAX(total_cases) as HighestInfectionCount , MAX((total_cases/ population)*100) as InfectionRate
 FROM PortfolioProject..[covid_deaths ]
@@ -45,7 +45,7 @@ WHERE continent is not null
 GROUP BY location 
 ORDER BY 3 desc 
 
---Showing Countries with Highest Death Count per Population 
+--Showing Countries with Highest Death Count per Population (TURKEY)
 
 SELECT location , MAX(CONVERT(int,total_deaths)) as TotalDeathCount , MAX((CAST(total_deaths as int )/ total_cases)*100) as DeathRate
 FROM PortfolioProject..[covid_deaths ]
@@ -54,7 +54,7 @@ AND location like '%key'
 GROUP BY location 
 
 
---Let's Break Things Down By Continent 
+
 
 SELECT location AS Location , MAX(CONVERT(int,total_deaths)) as TotalDeathCount , MAX((CAST(total_deaths as int )/ total_cases)*100) as DeathRate
 FROM PortfolioProject..[covid_deaths ]
@@ -72,7 +72,7 @@ WHERE continent is null
 GROUP BY location 
 ORDER BY 2 DESC 
 
---GLOBAL NUMBERS 
+
 
 SELECT date as Date , SUM(new_cases) as NewCases , SUM(CONVERT(int,new_deaths )) as NewDeaths , ROUND(SUM(CONVERT(int,new_deaths ))  / SUM( new_cases ),2)  as DeathsPercentageByDay
 FROM PortfolioProject..[covid_deaths ]
@@ -109,9 +109,9 @@ JOIN PortfolioProject..[covid_vaccinations ] vac
 WHERE dea.continent is not null
 ORDER BY 2,3 
 
---Use CTE 
+--CTE 
 
-WITH VacPop AS
+WITH VaccinatedPopulation AS
 (
 SELECT dea.continent, dea.location ,dea.date,dea.population,vac.new_vaccinations ,
 SUM(CONVERT(int,vac.new_vaccinations) ) OVER( PARTITION BY dea.location ORDER BY dea.date) as RollingPeopleVaccinated 
@@ -123,10 +123,11 @@ WHERE dea.continent is not null
 --ORDER BY 2,3 
 )
 SELECT * 
-FROM VacPop ; 
+FROM VaccinatedPopulation ; 
 
 
---Use with Subqueries 
+--Usage with Subqueries 
+
 SELECT a.*, ROUND((a.RollingPeopleVaccinated / a.population )*100,2) as VaccinatedPercentage
 FROM (   SELECT dea.continent, dea.location ,dea.date,dea.population,vac.new_vaccinations ,
 SUM(CONVERT(int,vac.new_vaccinations) ) OVER( PARTITION BY dea.location ORDER BY dea.date) as RollingPeopleVaccinated 
@@ -137,6 +138,7 @@ JOIN PortfolioProject..[covid_vaccinations ] vac
 WHERE dea.continent is not null   ) a 
 
 --TEMP Table 
+
 DROP TABLE IF EXISTS #PercentPopVaccinated
 CREATE TABLE #PercentPopVaccinateddd
 ( Continent nvarchar(255),
@@ -162,9 +164,9 @@ SELECT*
 FROM #PercentPopvaccinateddd
 
 
---Creating View
+--VIEWS
 
-CREATE VIEW PercentPopulationVacc as 
+CREATE VIEW PercentPopulationVaccinated as 
 SELECT dea.continent, dea.location ,dea.date,dea.population,vac.new_vaccinations ,
 SUM(CONVERT(int,vac.new_vaccinations) ) OVER( PARTITION BY dea.location ORDER BY dea.date) as RollingPeopleVaccinated 
 FROM PortfolioProject..[covid_deaths ] dea
@@ -175,7 +177,7 @@ WHERE dea.continent is not null
 --ORDER BY 2,3 
 
 SELECT*
-FROM PercentPopulationVacc
+FROM PercentPopulationVaccinated
 
 
 
